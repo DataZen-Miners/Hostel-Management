@@ -1,0 +1,17 @@
+/* Register.css */
+.register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Full viewport height */
+  }
+  
+.register-form {
+    width: 100%;
+    max-width: 600px; /* Limit maximum width for better appearance */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    background-color: white; /* Background for the form */
+    text-align: left;
+  }
