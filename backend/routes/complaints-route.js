@@ -13,11 +13,11 @@ const {
 complaintRoutes.use(cors());
 complaintRoutes.use(express.json());
 
-complaintRoutes.post("/", postComplaints);
-complaintRoutes.put("/:id", putComplaintsById);
-complaintRoutes.get("/", getAllComplaintsByUser);
+complaintRoutes.post("/complaints", postComplaints); // Ensure this route is correctly set up
+complaintRoutes.put("/complaints/:id", putComplaintsById);
+complaintRoutes.get("/complaints", getAllComplaintsByUser);
 complaintRoutes.get("/userType", getUserType);
 complaintRoutes.get("/userDetails", getUserDetails);
-complaintRoutes.delete("/:id", deleteComplaints);
+complaintRoutes.delete("/complaints/:id", deleteComplaints);
 
 module.exports = complaintRoutes;

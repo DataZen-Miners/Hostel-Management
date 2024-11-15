@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const nodemailer = require("nodemailer");
 const app = express();
 const { jwtVerifier } = require("../utils/jwtToken");
 const Complaint = require("../models/complaint-model");
@@ -13,8 +14,6 @@ app.use(express.json());
 const decodeUser = async (token) => {
   try {
     const decodedToken = jwtVerifier(token);
-    console.log(decodedToken);
-
     const { id, type } = decodedToken.user;
     let userInfo;
 
@@ -34,16 +33,10 @@ const decodeUser = async (token) => {
 
 exports.postComplaints = async (req, res) => {
   try {
-    const token = req.headers.authorization;
-    console.log(token);
-    const userInfo = await decodeUser(token);
-
-    const { name, rollNumber, hostel, roomNumber } = userInfo;
-    const { date, time, category, complaint, priority } = req.body;
+    const { name, rollNumber, email, contact, hostel, roomNumber, category, priority, complaint } = req.body;
 
     const newComplaint = new Complaint({
-      date,
-      time,
+      time: new Date().toLocaleTimeString(),
       category,
       complaint,
       priority,
@@ -55,6 +48,30 @@ exports.postComplaints = async (req, res) => {
 
     await newComplaint.save();
     res.json(newComplaint);
+
+    // Send email about the complaint registration
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      }
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email, // Email address from the request body
+      subject: 'Complaint Registered Successfully',
+      text: `Dear ${name},\n\nYour complaint has been registered successfully. Complaint ID: ${newComplaint._id}\n\nThank you,\nHostel Management`
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error("Error sending email:", error);
+      } else {
+        console.log("Email sent:", info.response);
+      }
+    });
   } catch (err) {
     console.log(err.message);
     res.status(500).json({ error: "Internal Server Error" });
@@ -64,7 +81,6 @@ exports.postComplaints = async (req, res) => {
 exports.putComplaintsById = async (req, res) => {
   const token = req.headers.authorization;
   const decodedToken = jwtVerifier(token);
-  console.log(decodedToken);
   const { id, type } = decodedToken.user;
 
   try {
@@ -88,10 +104,7 @@ exports.putComplaintsById = async (req, res) => {
 
 exports.getAllComplaintsByUser = async (req, res) => {
   const token = req.headers.authorization;
-  console.log(token);
   const decodedToken = jwtVerifier(token);
-  console.log(decodedToken);
-
   const { id, type } = decodedToken.user;
 
   try {
@@ -113,9 +126,7 @@ exports.getAllComplaintsByUser = async (req, res) => {
 exports.getUserType = async (req, res) => {
   try {
     const token = req.headers.authorization;
-    console.log(token);
     const decodedToken = jwtVerifier(token);
-    console.log(decodedToken);
     const { type } = decodedToken.user;
 
     res.json({ userType: type });
@@ -128,9 +139,7 @@ exports.getUserType = async (req, res) => {
 exports.getUserDetails = async (req, res) => {
   try {
     const token = req.headers.authorization;
-    console.log(token);
     const decodedToken = jwtVerifier(token);
-    console.log(decodedToken);
     const { id, type } = decodedToken.user;
 
     let userDetails;
@@ -151,9 +160,7 @@ exports.getUserDetails = async (req, res) => {
 exports.deleteComplaints = async (req, res) => {
   try {
     const token = req.headers.authorization;
-    console.log(token);
     const decodedToken = jwtVerifier(token);
-    console.log(decodedToken);
     const { type } = decodedToken.user;
     const { id } = req.params;
 
