@@ -3,6 +3,7 @@ import LoginPage from "./Pages/LoginPage"
 import RegistrationPage from "./Pages/RegistrationPage"
 import RegisterComplaint from "./Pages/RegisterComplaint"
 import ProfilePage from "./Pages/ProfilePage";
+import AdminPage from "./Pages/AdminPage";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
           <Route path="/sign-in" element={<LoginPage />} />
           <Route path="/register-complaint" element={<RegisterComplaint />} />
           <Route path='/profile' element={<ProfilePage/>} />
+          <Route path='/admin' element={<AdminPage/>} />
       </Routes>
     </BrowserRouter>
   )
