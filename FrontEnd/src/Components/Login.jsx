@@ -23,14 +23,22 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await axios.post("http://localhost:3000/login", formData);
-      if (response.data.jwtToken) {
+      if (response.data && response.data.jwtToken) {
+        localStorage.setItem("token", response.data.jwtToken); // Store the token
+        localStorage.setItem("role", response.data.role); // Store the role
         toast.success("Login successful!", {
-          onClose: () => navigate("/register-complaint")
+          onClose: () => {
+            if (response.data.role === "warden" || response.data.role === "admin") {
+              navigate("/complaint-dashboard");
+            } else {
+              navigate("/register-complaint");
+            }
+          }
         });
       }
     } catch (error) {
       toast.error("Login failed. Please check your credentials.");
-      console.error("Login error:", error.response.data);
+      console.error("Login error:", error.response?.data || error.message);
     }
   };
 

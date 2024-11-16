@@ -5,6 +5,7 @@ const app = express();
 const { jwtGenerator } = require("../utils/jwtToken");
 const User = require("../models/user-model");
 const Student = require("../models/std-model");
+const { jwtVerifier } = require("../utils/jwtToken");
 
 app.use(cors());
 app.use(express.json());
@@ -52,6 +53,29 @@ exports.userRegister = async (req, res) => {
   }
 };
 
+
+// const { jwtVerifier } = require("../utils/jwtToken");
+
+exports.getUserRole = async (req, res) => {
+  try {
+    const token = req.headers.authorization.split(" ")[1]; // Extract the token from "Bearer <token>"
+    if (!token) {
+      return res.status(401).json({ error: "No token provided" });
+    }
+
+    const decodedToken = jwtVerifier(token);
+    if (!decodedToken) {
+      return res.status(401).json({ error: "Invalid token" });
+    }
+
+    const { role } = decodedToken.user;
+    res.json({ role });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 exports.userLogin = async (req, res) => {
   const { email, password } = req.body;
 
@@ -69,9 +93,9 @@ exports.userLogin = async (req, res) => {
     }
 
     const jwtToken = jwtGenerator(user._id, user.role);
-    return res.json({ jwtToken });
+    return res.json({ jwtToken, role: user.role });
   } catch (err) {
-    console.error(err.message);
+    console.error("Login error:", err.message);
     res.status(500).send("Server error");
   }
 };

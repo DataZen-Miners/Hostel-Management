@@ -9,15 +9,16 @@ const {
   getUserDetails,
   deleteComplaints
 } = require("../controllers/complaints-controller");
+const authMiddleware = require("../middleware/auth");
 
 complaintRoutes.use(cors());
 complaintRoutes.use(express.json());
 
-complaintRoutes.post("/complaints", postComplaints); // Ensure this route is correctly set up
-complaintRoutes.put("/complaints/:id", putComplaintsById);
-complaintRoutes.get("/complaints", getAllComplaintsByUser);
-complaintRoutes.get("/userType", getUserType);
-complaintRoutes.get("/userDetails", getUserDetails);
-complaintRoutes.delete("/complaints/:id", deleteComplaints);
+complaintRoutes.post("/complaints", authMiddleware, postComplaints);
+complaintRoutes.put("/complaints/:id", authMiddleware, putComplaintsById);
+complaintRoutes.get("/complaints", authMiddleware, getAllComplaintsByUser);
+complaintRoutes.get("/userType", authMiddleware, getUserType);
+complaintRoutes.get("/userDetails", authMiddleware, getUserDetails);
+complaintRoutes.delete("/complaints/:id", authMiddleware, deleteComplaints);
 
 module.exports = complaintRoutes;

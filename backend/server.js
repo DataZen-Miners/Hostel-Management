@@ -1,6 +1,10 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+
+dotenv.config(); // Load environment variables
+
 const app = express();
 
 const complaintRoutes = require("./routes/complaints-route");
@@ -8,9 +12,9 @@ const studentRoutes = require("./routes/std-route");
 const wardenRoutes = require("./routes/warden-route");
 const userRoutes = require("./routes/user-route");
 const adminRoutes = require("./routes/admin-route");
-const emailRoutes = require("./routes/send-email-route"); // Add this line
+const emailRoutes = require("./routes/send-email-route");
 
-mongoose.connect("mongodb+srv://nottpande:pussy69@aditya.h8qrh.mongodb.net/?retryWrites=true&w=majority&appName=Aditya", {
+mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
@@ -25,7 +29,7 @@ app.use('/', studentRoutes);
 app.use('/', wardenRoutes);
 app.use('/', userRoutes);
 app.use('/', adminRoutes);
-app.use('/', emailRoutes); // Add this line
+app.use('/', emailRoutes);
 
 app.listen(3000, () => {
   console.log("Application is running on port 3000");

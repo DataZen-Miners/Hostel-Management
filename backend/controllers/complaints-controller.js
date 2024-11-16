@@ -60,7 +60,7 @@ exports.postComplaints = async (req, res) => {
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: email, // Email address from the request body
+      to: email,
       subject: 'Complaint Registered Successfully',
       text: `Dear ${name},\n\nYour complaint has been registered successfully. Complaint ID: ${newComplaint._id}\n\nThank you,\nHostel Management`
     };
@@ -105,6 +105,11 @@ exports.putComplaintsById = async (req, res) => {
 exports.getAllComplaintsByUser = async (req, res) => {
   const token = req.headers.authorization;
   const decodedToken = jwtVerifier(token);
+
+  if (!decodedToken) {
+    return res.status(401).json({ error: "Invalid token" });
+  }
+
   const { id, type } = decodedToken.user;
 
   try {
